@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "nodemon src/index.js"
   },
   "dependencies": {
     "koa": "^2.13.1",
