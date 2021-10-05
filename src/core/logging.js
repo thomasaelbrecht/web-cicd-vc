@@ -30,7 +30,7 @@ const prodFormat = () => {
 /**
  * Get the root logger.
  */
-module.exports.getLogger = () => {
+const getLogger = () => {
   if (!logger) throw new Error('You must first initialize the logger');
   return logger;
 };
@@ -38,7 +38,7 @@ module.exports.getLogger = () => {
 /**
  * Get a child logger from the root logger.
  */
-module.exports.getChildLogger = (name, meta = {}) => {
+const getChildLogger = (name, meta = {}) => {
   const logger = getLogger();
   const previousName = logger.defaultMeta?.name;
 
@@ -59,7 +59,7 @@ module.exports.getChildLogger = (name, meta = {}) => {
  * @param {object} options.defaultMeta - Default metadata to show.
  * @param {winston.transport[]} options.extraTransports - Extra transports to add besides console.
  */
-module.exports.initializeLogger = ({
+ const initializeLogger = ({
   level,
   disabled,
   isProduction,
@@ -79,4 +79,10 @@ module.exports.initializeLogger = ({
   });
 
   logger.info(` Logger initialized with minimum log level ${level}`);
-}
+};
+
+module.exports = {
+  getLogger,
+  getChildLogger,
+  initializeLogger,
+};

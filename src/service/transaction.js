@@ -1,11 +1,11 @@
-const { getLogger } = require('../core/logging');
+const { getChildLogger } = require('../core/logging');
 
 let TRANSACTIONS = [{id: 1, user: 'Benjamin', amount: 100, place: 'Irish Pub', date: '2021-08-15' }];
 
 const debugLog = (message, meta = {}) => {
-  const logger = getLogger();
-  logger.debug(message, meta);
-}
+  if (!this.logger) this.logger = getChildLogger('transaction-service');
+  this.logger.debug(message, meta);
+};
 
 const getAll = () => {
   debugLog('Fetching all transactions');
