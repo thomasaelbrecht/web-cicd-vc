@@ -2,15 +2,32 @@
   "name": "webservices-budget",
   "version": "0.0.1",
   "scripts": {
-    "start": "npx env-cmd nodemon src/index.js"
+    "start": "npx env-cmd nodemon"
+  },
+  "nodemonConfig": {
+    "signal": "SIGTERM",
+    "ignore": [
+      "node_modules/*",
+      ".vscode/*"
+    ],
+    "delay": "80",
+    "watch": [
+      "config",
+      "src"
+    ],
+    "ext": "js,json",
+    "legacyWatch": true,
+    "exec": "node --inspect=0.0.0.0:9001 --trace-warnings src/index.js"
   },
   "dependencies": {
     "@koa/cors": "^3.1.0",
     "@koa/router": "^10.1.1",
     "config": "^3.3.6",
     "env-cmd": "^10.1.0",
+    "knex": "^0.95.11",
     "koa": "^2.13.1",
     "koa-bodyparser": "^4.3.0",
+    "mysql2": "^2.3.0",
     "uuid": "^8.3.2",
     "winston": "^3.3.3"
   },
