@@ -65,7 +65,7 @@ const findById = async (id) => {
     .join(tables.place, `${tables.transaction}.place_id`, '=', `${tables.place}.id`)
     .join(tables.user, `${tables.transaction}.user_id`, '=', `${tables.user}.id`);
   
-  return transaction ? formatTransaction(transaction) : transaction;
+  return transaction && formatTransaction(transaction);
 };
 
 /**
