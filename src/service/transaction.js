@@ -10,6 +10,18 @@ const debugLog = (message, meta = {}) => {
 	this.logger.debug(message, meta);
 };
 
+const formatTransaction = ({ place_id, place_name, user_id, user_name, ...rest }) => ({
+	...rest,
+	place: {
+		id: place_id,
+		name: place_name,
+	},
+	user: {
+		id: user_id,
+		name: user_name,
+	},
+});
+
 /**
  * Get all `limit` transactions, skip the first `offset`.
  *
@@ -23,7 +35,12 @@ const getAll = async (
 	debugLog('Fetching all transactions', { limit, offset });
 	const data = await transactionRepository.findAll({ limit, offset });
 	const count = await transactionRepository.findCount();
-	return { data, count, limit, offset };
+	return {
+		data: data.map(formatTransaction),
+		count,
+		limit,
+		offset
+	};
 };
 
 /**
@@ -31,9 +48,15 @@ const getAll = async (
  *
  * @param {number} id - Id of the transaction to find.
  */
-const getById = (id) => {
+const getById = async (id) => {
 	debugLog(`Fetching transaction with id ${id}`);
-	return transactionRepository.findById(id);
+	const transaction = transactionRepository.findById(id);
+
+	if (!transaction) {
+		throw new Error(`There is no transaction with id ${id}`);
+	}
+
+	return formatTransaction(transaction);
 };
 
 /**
