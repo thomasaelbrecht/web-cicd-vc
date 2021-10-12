@@ -8,6 +8,19 @@ const SELECT_COLUMNS = [
   `${tables.user}.id as user_id`, `${tables.user}.name as user_name`,
 ];
 
+const formatTransaction = ({ place_id, place_name, user_id, user_name, ...rest }) => ({
+	...rest,
+	place: {
+		id: place_id,
+		name: place_name,
+	},
+	user: {
+		id: user_id,
+		name: user_name,
+	},
+});
+
+
 /**
  * Get all `limit` transactions, throws on error.
  *
@@ -15,17 +28,19 @@ const SELECT_COLUMNS = [
  * @param {number} pagination.limit - Nr of transactions to return.
  * @param {number} pagination.offset - Nr of transactions to skip.
  */
-const findAll = ({
+const findAll = async ({
   limit,
   offset,
 }) => {
-  return getKnex()(tables.transaction)
+  const transactions = await getKnex()(tables.transaction)
     .select(SELECT_COLUMNS)
     .join(tables.place, `${tables.transaction}.place_id`, '=', `${tables.place}.id`)
     .join(tables.user, `${tables.transaction}.user_id`, '=', `${tables.user}.id`)
     .limit(limit)
     .offset(offset)
     .orderBy('date', 'ASC');
+
+  return transactions.map(formatTransaction);
 };
 
 /**
@@ -43,12 +58,14 @@ const findCount = async () => {
  *
  * @param {string} id - Id of the transaction to find.
  */
-const findById = (id) => {
-  return getKnex()(tables.transaction)
+const findById = async (id) => {
+  const transaction = await getKnex()(tables.transaction)
     .first(SELECT_COLUMNS)
     .where(`${tables.transaction}.id`, id)
     .join(tables.place, `${tables.transaction}.place_id`, '=', `${tables.place}.id`)
     .join(tables.user, `${tables.transaction}.user_id`, '=', `${tables.user}.id`);
+  
+  return transaction ? formatTransaction(transaction) : transaction;
 };
 
 /**
