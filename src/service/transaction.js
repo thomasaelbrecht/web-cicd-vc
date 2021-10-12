@@ -38,7 +38,7 @@ const getAll = async (
  */
 const getById = async (id) => {
 	debugLog(`Fetching transaction with id ${id}`);
-	const transaction = transactionRepository.findById(id);
+	const transaction = await transactionRepository.findById(id);
 
 	if (!transaction) {
 		throw new Error(`There is no transaction with id ${id}`);
