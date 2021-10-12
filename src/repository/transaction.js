@@ -129,9 +129,9 @@ const updateById = async (id, {
         amount,
         date,
         place_id: placeId,
+        user_id: userId,
       })
-      .where(`${tables.transaction}.id`, id)
-      .andWhere(`${tables.transaction}.user_id`, userId);
+      .where(`${tables.transaction}.id`, id);
     return await findById(id);
   } catch (error) {
     const logger = getChildLogger('transactions-repo');
