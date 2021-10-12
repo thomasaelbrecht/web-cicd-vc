@@ -1,6 +1,7 @@
 const config = require('config');
 const { getChildLogger } = require('../core/logging');
 const transactionRepository = require('../repository/transaction');
+const userService = require('./user');
 
 const DEFAULT_PAGINATION_LIMIT = config.get('pagination.limit');
 const DEFAULT_PAGINATION_OFFSET = config.get('pagination.offset');
@@ -54,10 +55,14 @@ const getById = async (id) => {
  * @param {string} transaction.amount - Amount deposited/withdrawn.
  * @param {Date} transaction.date - Date of the transaction.
  * @param {string} transaction.placeId - Id of the place the transaction happened.
- * @param {string} transaction.userId - Id of the user who did the transaction.
+ * @param {string} transaction.user - Name of the user who did the transaction.
  */
-const create = ({ amount, date, placeId, userId }) => {
-	debugLog('Creating new transaction', { amount, date, placeId, userId });
+const create = async ({ amount, date, placeId, user }) => {
+	debugLog('Creating new transaction', { amount, date, placeId, user });
+
+	// For now simply create a new user every time
+	const { id: userId } = await userService.register({ name: user });
+
 	return transactionRepository.create({
 		amount,
 		date,
@@ -74,15 +79,18 @@ const create = ({ amount, date, placeId, userId }) => {
  * @param {string} [transaction.amount] - Amount deposited/withdrawn.
  * @param {Date} [transaction.date] - Date of the transaction.
  * @param {string} [transaction.placeId] - Id of the place the transaction happened.
- * @param {string} [transaction.userId] - Id of the user who did the transaction.
+ * @param {string} [transaction.user] - Name of the user who did the transaction.
  */
-const updateById = async (id, { amount, date, placeId, userId }) => {
+const updateById = async (id, { amount, date, placeId, user }) => {
 	debugLog(`Updating transaction with id ${id}`, {
 		amount,
 		date,
 		placeId,
-		userId,
+		user,
 	});
+
+	// For now simply create a new user every time
+	const { id: userId } = await userService.register({ name: user });
 
  	return transactionRepository.updateById(id, {
 		amount,
