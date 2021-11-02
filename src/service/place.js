@@ -23,7 +23,7 @@ const getAll = async (
 	debugLog('Fetching all places', { limit, offset });
 	const data = await placeRepository.findAll({ limit, offset });
 	const count = await placeRepository.findCount();
-	return { data, count };
+	return { data, count, limit, offset };
 };
 
 /**
