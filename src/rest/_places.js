@@ -1,5 +1,6 @@
 const Router = require('@koa/router');
 const placeService = require('../service/place');
+const { requireAuthentication } = require('../core/auth');
 
 const getAllPlaces = async (ctx) => {
 	ctx.body = await placeService.getAll();
@@ -33,11 +34,11 @@ module.exports = (app) => {
 		prefix: '/places',
 	});
 
-	router.get('/', getAllPlaces);
-	router.post('/', createPlace);
-	router.get('/:id', getPlaceById);
-	router.put('/:id', updatePlace);
-	router.delete('/:id', deletePlace);
+	router.get('/', requireAuthentication, getAllPlaces);
+	router.post('/', requireAuthentication, createPlace);
+	router.get('/:id', requireAuthentication, getPlaceById);
+	router.put('/:id', requireAuthentication, updatePlace);
+	router.delete('/:id', requireAuthentication, deletePlace);
 
 	app.use(router.routes()).use(router.allowedMethods());
 };

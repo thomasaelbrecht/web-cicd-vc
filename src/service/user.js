@@ -99,7 +99,7 @@ const register = async ({
   const data = await userRepository.findAll({ limit, offset });
   const totalCount = await userRepository.findCount();
   return {
-    data,
+    data: data.map(makeExposedUser),
     count: totalCount,
     limit,
     offset,
@@ -122,7 +122,7 @@ const getById = async (id) => {
     throw new Error(`No user with id ${id} exists`, { id });
   }
 
-  return user;
+  return makeExposedUser(user);
 };
 
 
@@ -138,9 +138,10 @@ const getById = async (id) => {
  * - NOT_FOUND: No user with the given id could be found.
  * - VALIDATION_FAILED: A user with the same email exists.
  */
-const updateById = (id, { name, email }) => {
+const updateById = async (id, { name, email }) => {
   debugLog(`Updating user with id ${id}`, { name, email });
-  return userRepository.updateById(id, { name, email });
+  const user = await userRepository.updateById(id, { name, email });
+  return makeExposedUser(user);
 };
 
 
@@ -161,6 +162,65 @@ const deleteById = async (id) => {
   }
 };
 
+/**
+ * Check and parse a JWT from the given header into a valid session
+ * if possible.
+ *
+ * @param {string} authHeader - The bare 'Authorization' header to parse
+ *
+ * @throws {ServiceError} One of:
+ * - UNAUTHORIZED: Invalid JWT token provided, possible errors:
+ *   - no token provided
+ *   - incorrect 'Bearer' prefix
+ *   - expired JWT
+ *   - other unknown error
+ */
+const checkAndParseSession = async (authHeader) => {
+  if (!authHeader) {
+    throw new Error('You need to be signed in');
+  }
+
+  if (!authHeader.startsWith('Bearer ')) {
+    throw new Error('Invalid authentication token');
+  }
+
+  const authToken = authHeader.substr(7);
+  try {
+    const {
+      roles, userId,
+    } = await verifyJWT(authToken);
+
+    return {
+      userId,
+      roles,
+      authToken,
+    };
+  } catch (error) {
+    const logger = getChildLogger('user-service');
+    logger.error(error.message, { error });
+    throw new Error(error.message);
+  }
+};
+
+/**
+ * Check if the given roles include the given required role.
+ *
+ * @param {string} role - Role to require.
+ * @param {string[]} roles - Roles of the user.
+ *
+ * @returns {void} Only throws if role not included.
+ *
+ * @throws {ServiceError} One of:
+ * - UNAUTHORIZED: Role not included in the array.
+ */
+const checkRole = (role, roles) => {
+  const hasPermission = roles.includes(role);
+
+  if (!hasPermission) {
+    throw new Error('You are not allowed to view this part of the application');
+  }
+};
+
 module.exports = {
   login,
   register,
@@ -168,4 +228,6 @@ module.exports = {
   getById,
   updateById,
   deleteById,
+  checkAndParseSession,
+  checkRole,
 };
