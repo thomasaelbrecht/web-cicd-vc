@@ -7,6 +7,11 @@ const login = async (ctx) => {
 	ctx.body = session;
 };
 
+const register = async (ctx) => {
+	const session = await userService.register(ctx.request.body);
+	ctx.body = session;
+};
+
 const getAllUsers = async (ctx) => {
   const users = await userService.getAll(
     ctx.query.limit && Number(ctx.query.limit),
@@ -41,6 +46,7 @@ module.exports = function installUsersRoutes(app) {
   });
 
 	router.post('/login', login);
+	router.post('/register', register);
 
   router.get('/', getAllUsers);
   router.get('/:id', getUserById);

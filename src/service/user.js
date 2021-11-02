@@ -1,6 +1,7 @@
 const { getChildLogger } = require('../core/logging');
-const { verifyPassword } = require('../core/password');
-const { generateJWT } = require('../core/jwt');
+const { verifyPassword, hashPassword } = require('../core/password');
+const { generateJWT, verifyJWT } = require('../core/jwt');
+const Role = require('../core/roles');
 const userRepository = require('../repository/user');
 
 const debugLog = (message, meta = {}) => {
@@ -58,6 +59,31 @@ const login = async (email, password) => {
 
   return await makeLoginData(user);
 };
+
+/**
+ * Register a new user
+ *
+ * @param {object} user - The user's data.
+ * @param {string} user.name - The user's name.
+ */
+const register = async ({
+  name,
+  email,
+  password,
+}) => {
+  debugLog('Creating a new user', { name });
+  const passwordHash = await hashPassword(password);
+
+  const user = await userRepository.create({
+    name,
+    email,
+    passwordHash,
+    roles: [Role.USER],
+  });
+
+  return await makeLoginData(user);
+};
+
 
 /**
  * Get all `limit` users, skip the first `offset`.
@@ -137,6 +163,7 @@ const deleteById = async (id) => {
 
 module.exports = {
   login,
+  register,
   getAll,
   getById,
   updateById,
