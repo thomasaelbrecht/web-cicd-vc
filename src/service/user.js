@@ -1,4 +1,6 @@
 const { getChildLogger } = require('../core/logging');
+const { verifyPassword } = require('../core/password');
+const { generateJWT } = require('../core/jwt');
 const userRepository = require('../repository/user');
 
 const debugLog = (message, meta = {}) => {
@@ -7,20 +9,55 @@ const debugLog = (message, meta = {}) => {
 };
 
 /**
- * Register a new user
- *
- * @param {object} user - The user's data.
- * @param {string} user.name - The user's name.
+ * Only return the public information about the given user.
  */
-const register = ({
+const makeExposedUser = ({
+  id,
   name,
-}) => {
-  debugLog('Creating a new user', { name });
-  return userRepository.create({
-    name,
-  });
+  email
+}) => ({
+  id,
+  name,
+  email,
+});
+
+/**
+ * Create the returned information after login.
+ */
+const makeLoginData = async (user) => {
+  const token = await generateJWT(user);
+
+  return {
+    user: makeExposedUser(user),
+    token,
+  };
 };
 
+/**
+ * Try to login a user with the given username and password.
+ *
+ * @param {string} email - The email to try.
+ * @param {string} password - The password to try.
+ *
+ * @returns {Promise<object>} - Promise whichs resolves in an object containing the token and signed in user.
+ */
+const login = async (email, password) => {
+  const user = await userRepository.findByEmail(email);
+
+  if (!user) {
+    // DO NOT expose we don't know the user
+    throw new Error('The given email and password do not match');
+  }
+
+  const passwordValid = await verifyPassword(password, user.password_hash);
+
+  if (!passwordValid) {
+    // DO NOT expose we know the user but an invalid password was given
+    throw new Error('The given email and password do not match');
+  }
+
+  return await makeLoginData(user);
+};
 
 /**
  * Get all `limit` users, skip the first `offset`.
@@ -99,7 +136,7 @@ const deleteById = async (id) => {
 };
 
 module.exports = {
-  register,
+  login,
   getAll,
   getById,
   updateById,

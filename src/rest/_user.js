@@ -1,6 +1,12 @@
 const Router = require('@koa/router');
 const userService = require('../service/user');
 
+const login = async (ctx) => {
+	const { email, password } = ctx.request.body;
+	const session = await userService.login(email, password);
+	ctx.body = session;
+};
+
 const getAllUsers = async (ctx) => {
   const users = await userService.getAll(
     ctx.query.limit && Number(ctx.query.limit),
@@ -33,6 +39,8 @@ module.exports = function installUsersRoutes(app) {
   const router = new Router({
     prefix: '/users',
   });
+
+	router.post('/login', login);
 
   router.get('/', getAllUsers);
   router.get('/:id', getUserById);
