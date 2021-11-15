@@ -9,6 +9,7 @@ const getAllTransactions = async (ctx) => {
 const createTransaction = async (ctx) => {
 	const newTransaction = await transactionService.create({
 		...ctx.request.body,
+		userId: ctx.state.session.userId,
 		date: new Date(ctx.request.body.date),
 	});
 	ctx.body = newTransaction;
