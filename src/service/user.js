@@ -15,11 +15,13 @@ const debugLog = (message, meta = {}) => {
 const makeExposedUser = ({
   id,
   name,
-  email
+  email,
+  roles,
 }) => ({
   id,
   name,
   email,
+  roles,
 });
 
 /**
