@@ -1,7 +1,6 @@
 const config = require('config');
 const { getChildLogger } = require('../core/logging');
 const transactionRepository = require('../repository/transaction');
-const userService = require('./user');
 
 const DEFAULT_PAGINATION_LIMIT = config.get('pagination.limit');
 const DEFAULT_PAGINATION_OFFSET = config.get('pagination.offset');
@@ -57,11 +56,8 @@ const getById = async (id) => {
  * @param {string} transaction.placeId - Id of the place the transaction happened.
  * @param {string} transaction.user - Name of the user who did the transaction.
  */
-const create = async ({ amount, date, placeId, user }) => {
-	debugLog('Creating new transaction', { amount, date, placeId, user });
-
-	// For now simply create a new user every time
-	const { id: userId } = await userService.register({ name: user });
+const create = async ({ amount, date, placeId, userId }) => {
+	debugLog('Creating new transaction', { amount, date, placeId, userId });
 
 	return transactionRepository.create({
 		amount,
@@ -79,18 +75,15 @@ const create = async ({ amount, date, placeId, user }) => {
  * @param {string} [transaction.amount] - Amount deposited/withdrawn.
  * @param {Date} [transaction.date] - Date of the transaction.
  * @param {string} [transaction.placeId] - Id of the place the transaction happened.
- * @param {string} [transaction.user] - Name of the user who did the transaction.
+ * @param {string} [transaction.userId] - Id of the user who did the transaction.
  */
-const updateById = async (id, { amount, date, placeId, user }) => {
+const updateById = async (id, { amount, date, placeId, userId }) => {
 	debugLog(`Updating transaction with id ${id}`, {
 		amount,
 		date,
 		placeId,
-		user,
+		userId,
 	});
-
-	// For now simply create a new user every time
-	const { id: userId } = await userService.register({ name: user });
 
  	return transactionRepository.updateById(id, {
 		amount,

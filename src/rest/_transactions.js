@@ -22,6 +22,7 @@ const getTransactionById = async (ctx) => {
 const updateTransaction = async (ctx) => {
 	ctx.body = await transactionService.updateById(ctx.params.id, {
 		...ctx.request.body,
+		userId: ctx.state.session.userId,
 		date: new Date(ctx.request.body.date),
 	});
 };
