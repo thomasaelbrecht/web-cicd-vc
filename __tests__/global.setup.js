@@ -1,11 +1,11 @@
 const config = require('config');
 const { initializeData, getKnex, tables } = require('../src/data');
-const { initializeLogging } = require('../src/core/logging');
+const { initializeLogger } = require('../src/core/logging');
 const Role = require('../src/core/roles');
 
 module.exports = async () => {
   // Create a database connection
-  initializeLogging({
+  initializeLogger({
     level: config.get('log.level'),
     disabled: config.get('log.disabled'),
   });

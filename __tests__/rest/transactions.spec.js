@@ -1,6 +1,5 @@
-const supertest = require('supertest');
-const createServer = require('../../src/createServer');
-const { getKnex, tables } = require('../../src/data');
+const { tables } = require('../../src/data');
+const { withServer, login } = require('../supertest.setup');
 
 const data = {
   transactions: [{
@@ -46,20 +45,18 @@ const dataToDelete = {
   users: ['7f28c5f9-d711-4cd6-ac15-d13d71abff80']
 };
 
-
 describe('Transactions', () => {
-  let server;
   let request;
   let knex;
+  let loginHeader;
 
-  beforeAll(async () => {
-    server = await createServer();
-    request = supertest(server.getApp().callback());
-    knex = getKnex();
+  withServer(({ knex: k, supertest:s }) => {
+    knex = k;
+    request = s;
   });
 
-  afterAll(async () => {
-    await server.stop();
+  beforeAll(async () => {
+    loginHeader = await login(request);
   });
 
   const url = '/api/transactions';
@@ -67,7 +64,6 @@ describe('Transactions', () => {
   describe('GET /api/transactions', () => {
     beforeAll(async () => {
       await knex(tables.place).insert(data.places);
-      await knex(tables.user).insert(data.users);
       await knex(tables.transaction).insert(data.transactions);
     });
 
@@ -79,14 +75,11 @@ describe('Transactions', () => {
       await knex(tables.place)
         .whereIn('id', dataToDelete.places)
         .delete();
-
-      await knex(tables.user)
-        .whereIn('id', dataToDelete.users)
-        .delete();
     });
 
     test('it should 200 and return all transactions', async () => {
-      const response = await request.get(url);
+      const response = await request.get(url)
+        .set('Authorization', loginHeader);
       expect(response.status).toBe(200);
       expect(response.body.limit).toBe(100);
       expect(response.body.offset).toBe(0);
@@ -95,7 +88,8 @@ describe('Transactions', () => {
 
 
     test('it should 200 and paginate the list of transactions', async () => {
-      const response = await request.get(`${url}?limit=2&offset=1`);
+      const response = await request.get(`${url}?limit=2&offset=1`)
+        .set('Authorization', loginHeader);
       expect(response.status).toBe(200);
       expect(response.body.data.length).toBe(2);
       expect(response.body.limit).toBe(2);
@@ -133,7 +127,6 @@ describe('Transactions', () => {
 
     beforeAll(async () => {
       await knex(tables.place).insert(data.places);
-      await knex(tables.user).insert(data.users);
       await knex(tables.transaction).insert(data.transactions[0]);
     });
 
@@ -145,15 +138,12 @@ describe('Transactions', () => {
       await knex(tables.place)
         .whereIn('id', dataToDelete.places)
         .delete();
-
-      await knex(tables.user)
-        .whereIn('id', dataToDelete.users)
-        .delete();
     });
 
     test('it should 200 and return the requested transaction', async () => {
       const transactionId = data.transactions[0].id;
       const response = await request.get(`${url}/${transactionId}`)
+        .set('Authorization', loginHeader);
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual({
@@ -189,14 +179,11 @@ describe('Transactions', () => {
       await knex(tables.place)
         .whereIn('id', dataToDelete.places)
         .delete();
-
-      await knex(tables.user)
-        .whereIn('id', usersToDelete)
-        .delete();
     });
 
     test('it should 201 and return the created transaction', async () => {
       const response = await request.post(url)
+        .set('Authorization', loginHeader)
         .send({
           amount: 102,
           date: '2021-05-27T13:00:00.000Z',
@@ -225,7 +212,6 @@ describe('Transactions', () => {
 
     beforeAll(async () => {
       await knex(tables.place).insert(data.places);
-      await knex(tables.user).insert(data.users);
       await knex(tables.transaction).insert([{
         id: '7f28c5f9-d711-4cd6-ac15-d13d71abff89',
         amount: 102,
@@ -243,14 +229,11 @@ describe('Transactions', () => {
       await knex(tables.place)
         .whereIn('id', dataToDelete.places)
         .delete();
-
-      await knex(tables.user)
-        .whereIn('id', [...dataToDelete.users, ...usersToDelete])
-        .delete();
     });
 
     test('it should 200 and return the updated transaction', async () => {
       const response = await request.put(`${url}/7f28c5f9-d711-4cd6-ac15-d13d71abff89`)
+        .set('Authorization', loginHeader)
         .send({
           amount: -125,
           date: '2021-05-27T13:00:00.000Z',
@@ -277,7 +260,6 @@ describe('Transactions', () => {
 
     beforeAll(async () => {
       await knex(tables.place).insert(data.places);
-      await knex(tables.user).insert(data.users);
 
       await knex(tables.transaction).insert([{
         id: '7f28c5f9-d711-4cd6-ac15-d13d71abff89',
@@ -292,13 +274,11 @@ describe('Transactions', () => {
       await knex(tables.place)
         .whereIn('id', dataToDelete.places)
         .delete();
-      await knex(tables.user)
-        .whereIn('id', dataToDelete.users)
-        .delete();
     });
 
     test('it should 204 and return nothing', async () => {
-      const response = await request.delete(`${url}/7f28c5f9-d711-4cd6-ac15-d13d71abff89`);
+      const response = await request.delete(`${url}/7f28c5f9-d711-4cd6-ac15-d13d71abff89`)
+        .set('Authorization', loginHeader);
       expect(response.status).toBe(204);
       expect(response.body).toEqual({});
     });

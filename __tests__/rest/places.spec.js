@@ -1,6 +1,5 @@
-const supertest = require('supertest');
-const createServer = require('../../src/createServer');
-const { getKnex, tables } = require('../../src/data');
+const { tables } = require('../../src/data');
+const { withServer, login } = require('../supertest.setup');
 
 const data = {
   places: [{
@@ -30,18 +29,17 @@ const dataToDelete = {
 };
 
 describe('Places', () => {
-  let server;
   let request;
   let knex;
+  let loginHeader;
 
-  beforeAll(async () => {
-    server = await createServer();
-    request = supertest(server.getApp().callback());
-    knex = getKnex();
+  withServer(({ knex: k, supertest:s }) => {
+    knex = k;
+    request = s;
   });
 
-  afterAll(async () => {
-    await server.stop();
+  beforeAll(async () => {
+    loginHeader = await login(request);
   });
 
   const url = '/api/places';
@@ -60,6 +58,7 @@ describe('Places', () => {
 
     test('it should 200 and return all places', async () => {
       const response = await request.get(url)
+        .set('Authorization', loginHeader);
 
       expect(response.status).toBe(200);
       // one place from transactions could be present due to Jest running all tests parallel
@@ -83,6 +82,7 @@ describe('Places', () => {
 
     test('it should 200 and return the requested place', async () => {
       const response = await request.get(`${url}/${data.places[0].id}`)
+        .set('Authorization', loginHeader);
       expect(response.status).toBe(200);
       expect(response.body).toEqual(data.places[0]);
     });
@@ -100,6 +100,7 @@ describe('Places', () => {
 
     test('it should 201 and return the created place', async () => {
       const response = await request.post(url)
+        .set('Authorization', loginHeader)
         .send({
           name: 'New place',
         });
@@ -114,6 +115,7 @@ describe('Places', () => {
 
     test('it should 201 and return the created place with it\'s rating', async () => {
       const response = await request.post(url)
+        .set('Authorization', loginHeader)
         .send({
           name: 'Lovely place',
           rating: 5,
@@ -142,6 +144,7 @@ describe('Places', () => {
 
     test('it should 200 and return the updated place', async () => {
       const response = await request.put(`${url}/${data.places[0].id}`)
+        .set('Authorization', loginHeader)
         .send({
           name: 'Changed name',
           rating: 1,
@@ -164,6 +167,7 @@ describe('Places', () => {
 
     test('it should 204 and return nothing', async () => {
       const response = await request.delete(`${url}/${data.places[0].id}`)
+        .set('Authorization', loginHeader);
 
       expect(response.status).toBe(204);
       expect(response.body).toEqual({});
