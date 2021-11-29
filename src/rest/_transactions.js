@@ -5,14 +5,14 @@ const { requireAuthentication } = require('../core/auth');
 const validate = require('./_validation.js');
 
 const getAllTransactions = async (ctx) => {
-	const limit =  ctx.query.limit && Number(ctx.query.limit);
-    const offset =  ctx.query.offset && Number(ctx.query.offset);
-	ctx.body = await transactionService.getAll(limit, offset);
+  const limit = ctx.query.limit && Number(ctx.query.limit);
+  const offset = ctx.query.offset && Number(ctx.query.offset);
+  ctx.body = await transactionService.getAll(limit, offset);
 };
 getAllTransactions.validationScheme = {
 	query: Joi.object({
-		limit: Joi.number().positive().max(1000).optional(),
-		offset: Joi.number().min(0).optional(),
+		limit: Joi.number().integer().positive().max(1000).optional(),
+		offset: Joi.number().integer().min(0).optional(),
 	}).and('limit', 'offset'),
  };
 

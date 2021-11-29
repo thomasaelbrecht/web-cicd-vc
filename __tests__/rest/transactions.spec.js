@@ -188,7 +188,6 @@ describe('Transactions', () => {
           amount: 102,
           date: '2021-05-27T13:00:00.000Z',
           placeId: '7f28c5f9-d711-4cd6-ac15-d13d71abff90',
-          user: 'Test User'
         });
 
       expect(response.status).toBe(201);
@@ -238,7 +237,6 @@ describe('Transactions', () => {
           amount: -125,
           date: '2021-05-27T13:00:00.000Z',
           placeId: '7f28c5f9-d711-4cd6-ac15-d13d71abff90',
-          user: 'Test User'
         });
 
       expect(response.status).toBe(200);

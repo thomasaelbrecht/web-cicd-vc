@@ -38,8 +38,8 @@ const getAllUsers = async (ctx) => {
 };
 getAllUsers.validationScheme = {
   query: Joi.object({
-    limit: Joi.number().positive().max(1000).optional(),
-    offset: Joi.number().min(0).optional(),
+    limit: Joi.number().integer().positive().max(1000).optional(),
+    offset: Joi.number().integer().min(0).optional(),
   }).and('limit', 'offset'),
 };
 
