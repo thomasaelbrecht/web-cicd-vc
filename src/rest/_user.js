@@ -1,14 +1,16 @@
 const Joi = require('joi');
 const Router = require('@koa/router');
+
 const userService = require('../service/user');
 const Role = require('../core/roles');
 const { requireAuthentication, makeRequireRole } = require('../core/auth');
+
 const validate = require('./_validation');
 
 const login = async (ctx) => {
-	const { email, password } = ctx.request.body;
-	const session = await userService.login(email, password);
-	ctx.body = session;
+  const { email, password } = ctx.request.body;
+  const session = await userService.login(email, password);
+  ctx.body = session;
 };
 login.validationScheme = {
   body: {
@@ -18,8 +20,8 @@ login.validationScheme = {
 };
 
 const register = async (ctx) => {
-	const session = await userService.register(ctx.request.body);
-	ctx.body = session;
+  const session = await userService.register(ctx.request.body);
+  ctx.body = session;
 };
 register.validationScheme = {
   body: {
@@ -88,8 +90,8 @@ module.exports = function installUsersRoutes(app) {
   });
 
   // Public routes
-	router.post('/login', validate(login.validationScheme), login);
-	router.post('/register', validate(register.validationScheme), register);
+  router.post('/login', validate(login.validationScheme), login);
+  router.post('/register', validate(register.validationScheme), register);
 
   const requireAdmin = makeRequireRole(Role.ADMIN);
   

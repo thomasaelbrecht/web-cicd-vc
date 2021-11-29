@@ -3,21 +3,21 @@ const { withServer, login } = require('../supertest.setup');
 
 const data = {
   places: [{
-      id: '7f28c5f9-d711-4cd6-ac15-d13d71abff83',
-      name: 'Loon',
-      rating: 5
-    },
-    {
-      id: '7f28c5f9-d711-4cd6-ac15-d13d71abff84',
-      name: 'Bezine',
-      rating: 2
-    },
-    {
-      id: '7f28c5f9-d711-4cd6-ac15-d13d71abff85',
-      name: 'Irish pub',
-      rating: 4
-    }
-  ]
+    id: '7f28c5f9-d711-4cd6-ac15-d13d71abff83',
+    name: 'Loon',
+    rating: 5,
+  },
+  {
+    id: '7f28c5f9-d711-4cd6-ac15-d13d71abff84',
+    name: 'Bezine',
+    rating: 2,
+  },
+  {
+    id: '7f28c5f9-d711-4cd6-ac15-d13d71abff85',
+    name: 'Irish pub',
+    rating: 4,
+  },
+  ],
 };
 
 const dataToDelete = {
@@ -25,7 +25,7 @@ const dataToDelete = {
     '7f28c5f9-d711-4cd6-ac15-d13d71abff83',
     '7f28c5f9-d711-4cd6-ac15-d13d71abff84',
     '7f28c5f9-d711-4cd6-ac15-d13d71abff85',
-  ]
+  ],
 };
 
 describe('Places', () => {

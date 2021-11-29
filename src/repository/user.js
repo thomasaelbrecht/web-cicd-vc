@@ -1,4 +1,5 @@
 const uuid = require('uuid');
+
 const { tables, getKnex } = require('../data');
 const { getChildLogger } = require('../core/logging');
 
@@ -46,9 +47,9 @@ const findById = (id) => {
  * @param {string} email - The email to search for.
  */
 const findByEmail = (email) => {
-	return getKnex()(tables.user)
-		.where('email', email)
-		.first();
+  return getKnex()(tables.user)
+    .where('email', email)
+    .first();
 };
 
 /**

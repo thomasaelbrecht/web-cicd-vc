@@ -6,8 +6,8 @@ const ServiceError = require('../core/serviceError');
 const userRepository = require('../repository/user');
 
 const debugLog = (message, meta = {}) => {
-	if (!this.logger) this.logger = getChildLogger('user-service');
-	this.logger.debug(message, meta);
+  if (!this.logger) this.logger = getChildLogger('user-service');
+  this.logger.debug(message, meta);
 };
 
 /**
@@ -94,7 +94,7 @@ const register = async ({
  * @param {number} [limit] - Nr of users to fetch.
  * @param {number} [offset] - Nr of users to skip.
  */
- const getAll = async (
+const getAll = async (
   limit = 100,
   offset = 0,
 ) => {

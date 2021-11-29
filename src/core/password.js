@@ -7,25 +7,25 @@ const ARGON_TIME_COST = config.get('auth.argon.timeCost');
 const ARGON_MEMORY_COST = config.get('auth.argon.memoryCost');
 
 module.exports.hashPassword = async (password) => {
-	const passwordHash = await argon2.hash(password, {
-		type: argon2.argon2id,
-		saltLength: ARGON_SALT_LENGTH,
-		hashLength: ARGON_HASH_LENGTH,
-		timeCost: ARGON_TIME_COST,
-		memoryCost: ARGON_MEMORY_COST,
-	});
+  const passwordHash = await argon2.hash(password, {
+    type: argon2.argon2id,
+    saltLength: ARGON_SALT_LENGTH,
+    hashLength: ARGON_HASH_LENGTH,
+    timeCost: ARGON_TIME_COST,
+    memoryCost: ARGON_MEMORY_COST,
+  });
 
-	return passwordHash;
+  return passwordHash;
 };
 
 module.exports.verifyPassword = async (password, passwordHash) => {
-	const valid = await argon2.verify( passwordHash, password, {
-		type: argon2.argon2id,
-		saltLength: ARGON_SALT_LENGTH,
-		hashLength: ARGON_HASH_LENGTH,
-		timeCost: ARGON_TIME_COST,
-		memoryCost: ARGON_MEMORY_COST,
-	});
+  const valid = await argon2.verify( passwordHash, password, {
+    type: argon2.argon2id,
+    saltLength: ARGON_SALT_LENGTH,
+    hashLength: ARGON_HASH_LENGTH,
+    timeCost: ARGON_TIME_COST,
+    memoryCost: ARGON_MEMORY_COST,
+  });
 
-	return valid;
+  return valid;
 };

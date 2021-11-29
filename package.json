@@ -4,7 +4,8 @@
   "scripts": {
     "start": "npx env-cmd nodemon",
     "test": "npx env-cmd -f .env.test jest",
-    "test:coverage": "npx env-cmd -f .env.test jest --coverage"
+    "test:coverage": "npx env-cmd -f .env.test jest --coverage",
+    "lint": "eslint . --fix"
   },
   "nodemonConfig": {
     "signal": "SIGTERM",
@@ -41,6 +42,8 @@
     "winston": "^3.3.3"
   },
   "devDependencies": {
+    "eslint": "^8.3.0",
+    "eslint-plugin-import": "^2.25.3",
     "nodemon": "^2.0.12"
   }
 }

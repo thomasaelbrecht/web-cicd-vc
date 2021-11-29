@@ -3,26 +3,26 @@ const { withServer, login } = require('../supertest.setup');
 
 const data = {
   transactions: [{
-      id: '7f28c5f9-d711-4cd6-ac15-d13d71abff86',
-      user_id: '7f28c5f9-d711-4cd6-ac15-d13d71abff80',
-      place_id: '7f28c5f9-d711-4cd6-ac15-d13d71abff90',
-      amount: 3500,
-      date: new Date(2021, 4, 25, 19, 40),
-    },
-    {
-      id: '7f28c5f9-d711-4cd6-ac15-d13d71abff87',
-      user_id: '7f28c5f9-d711-4cd6-ac15-d13d71abff80',
-      place_id: '7f28c5f9-d711-4cd6-ac15-d13d71abff90',
-      amount: -220,
-      date: new Date(2021, 4, 8, 20, 0),
-    },
-    {
-      id: '7f28c5f9-d711-4cd6-ac15-d13d71abff88',
-      user_id: '7f28c5f9-d711-4cd6-ac15-d13d71abff80',
-      place_id: '7f28c5f9-d711-4cd6-ac15-d13d71abff90',
-      amount: -74,
-      date: new Date(2021, 4, 21, 14, 30),
-    },
+    id: '7f28c5f9-d711-4cd6-ac15-d13d71abff86',
+    user_id: '7f28c5f9-d711-4cd6-ac15-d13d71abff80',
+    place_id: '7f28c5f9-d711-4cd6-ac15-d13d71abff90',
+    amount: 3500,
+    date: new Date(2021, 4, 25, 19, 40),
+  },
+  {
+    id: '7f28c5f9-d711-4cd6-ac15-d13d71abff87',
+    user_id: '7f28c5f9-d711-4cd6-ac15-d13d71abff80',
+    place_id: '7f28c5f9-d711-4cd6-ac15-d13d71abff90',
+    amount: -220,
+    date: new Date(2021, 4, 8, 20, 0),
+  },
+  {
+    id: '7f28c5f9-d711-4cd6-ac15-d13d71abff88',
+    user_id: '7f28c5f9-d711-4cd6-ac15-d13d71abff80',
+    place_id: '7f28c5f9-d711-4cd6-ac15-d13d71abff90',
+    amount: -74,
+    date: new Date(2021, 4, 21, 14, 30),
+  },
   ],
   places: [{
     id: '7f28c5f9-d711-4cd6-ac15-d13d71abff90',
@@ -31,8 +31,8 @@ const data = {
   }],
   users: [{
     id: '7f28c5f9-d711-4cd6-ac15-d13d71abff80',
-    name: 'Test User'
-  }]
+    name: 'Test User',
+  }],
 };
 
 const dataToDelete = {
@@ -42,7 +42,7 @@ const dataToDelete = {
     '7f28c5f9-d711-4cd6-ac15-d13d71abff88',
   ],
   places: ['7f28c5f9-d711-4cd6-ac15-d13d71abff90'],
-  users: ['7f28c5f9-d711-4cd6-ac15-d13d71abff80']
+  users: ['7f28c5f9-d711-4cd6-ac15-d13d71abff80'],
 };
 
 describe('Transactions', () => {
@@ -160,7 +160,7 @@ describe('Transactions', () => {
         date: new Date(2021, 4, 25, 19, 40).toJSON(),
       });
     });
-  })
+  });
 
   describe('POST /api/transactions', () => {
 

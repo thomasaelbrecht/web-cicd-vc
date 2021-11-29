@@ -1,4 +1,5 @@
 const config = require('config');
+
 const { getChildLogger } = require('../core/logging');
 const placeRepository = require('../repository/place');
 
@@ -6,8 +7,8 @@ const DEFAULT_PAGINATION_LIMIT = config.get('pagination.limit');
 const DEFAULT_PAGINATION_OFFSET = config.get('pagination.offset');
 
 const debugLog = (message, meta = {}) => {
-	if (!this.logger) this.logger = getChildLogger('place-service');
-	this.logger.debug(message, meta);
+  if (!this.logger) this.logger = getChildLogger('place-service');
+  this.logger.debug(message, meta);
 };
 
 /**
@@ -17,13 +18,13 @@ const debugLog = (message, meta = {}) => {
  * @param {number} [offset] - Nr of places to skip.
  */
 const getAll = async (
-	limit = DEFAULT_PAGINATION_LIMIT,
-	offset = DEFAULT_PAGINATION_OFFSET,
+  limit = DEFAULT_PAGINATION_LIMIT,
+  offset = DEFAULT_PAGINATION_OFFSET,
 ) => {
-	debugLog('Fetching all places', { limit, offset });
-	const data = await placeRepository.findAll({ limit, offset });
-	const count = await placeRepository.findCount();
-	return { data, count, limit, offset };
+  debugLog('Fetching all places', { limit, offset });
+  const data = await placeRepository.findAll({ limit, offset });
+  const count = await placeRepository.findCount();
+  return { data, count, limit, offset };
 };
 
 /**
@@ -32,8 +33,8 @@ const getAll = async (
  * @param {string} id - Id of the place to get.
  */
 const getById = (id) => {
-	debugLog(`Fetching place with id ${id}`);
-	return placeRepository.findById(id);
+  debugLog(`Fetching place with id ${id}`);
+  return placeRepository.findById(id);
 };
 
 /**
@@ -44,9 +45,9 @@ const getById = (id) => {
  * @param {number} [place.rating] - Rating of the place (between 1 and 5).
  */
 const create = ({ name, rating }) => {
-	const newPlace = { name, rating };
-	debugLog('Creating new place', newPlace);
-	return placeRepository.create(newPlace);
+  const newPlace = { name, rating };
+  debugLog('Creating new place', newPlace);
+  return placeRepository.create(newPlace);
 };
 
 /**
@@ -58,9 +59,9 @@ const create = ({ name, rating }) => {
  * @param {number} [place.rating] - Rating of the place (between 1 and 5).
  */
 const updateById = (id, { name, rating }) => {
-	const updatedPlace = { name, rating };
-	debugLog(`Updating place with id ${id}`, updatedPlace);
-	return placeRepository.updateById(id, updatedPlace);
+  const updatedPlace = { name, rating };
+  debugLog(`Updating place with id ${id}`, updatedPlace);
+  return placeRepository.updateById(id, updatedPlace);
 };
 
 /**
@@ -69,14 +70,14 @@ const updateById = (id, { name, rating }) => {
  * @param {string} id - Id of the place to delete.
  */
 const deleteById = async (id) => {
-	debugLog(`Deleting place with id ${id}`);
-	await placeRepository.deleteById(id);
+  debugLog(`Deleting place with id ${id}`);
+  await placeRepository.deleteById(id);
 };
 
 module.exports = {
-	getAll,
-	getById,
-	create,
-	updateById,
-	deleteById,
+  getAll,
+  getById,
+  create,
+  updateById,
+  deleteById,
 };
